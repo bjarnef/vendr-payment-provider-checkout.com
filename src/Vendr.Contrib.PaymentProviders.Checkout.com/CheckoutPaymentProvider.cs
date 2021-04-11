@@ -1,3 +1,4 @@
+using Checkout;
 using System;
 using System.Collections.Generic;
 using System.Web;
@@ -29,6 +30,15 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
 
         public override PaymentFormResult GenerateForm(OrderReadOnly order, string continueUrl, string cancelUrl, string callbackUrl, CheckoutSettings settings)
         {
+            var currency = Vendr.Services.CurrencyService.GetCurrency(order.CurrencyId);
+            var currencyCode = currency.Code.ToUpperInvariant();
+
+            // Ensure currency has valid ISO 4217 code
+            if (!Iso4217.CurrencyCodes.ContainsKey(currencyCode))
+            {
+                throw new Exception("Currency must be a valid ISO 4217 currency code: " + currency.Name);
+            }
+
             return new PaymentFormResult()
             {
                 Form = new PaymentForm(continueUrl, FormMethod.Post)

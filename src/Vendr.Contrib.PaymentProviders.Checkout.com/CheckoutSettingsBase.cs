@@ -18,5 +18,10 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
             Description = "The URL to return to if the payment attempt errors. eg: /error/",
             SortOrder = 300)]
         public string ErrorUrl { get; set; }
+
+        [PaymentProviderSetting(Name = "Secret Key",
+            Description = "Secret key",
+            SortOrder = 400)]
+        public string SecretKey { get; set; }
     }
 }
