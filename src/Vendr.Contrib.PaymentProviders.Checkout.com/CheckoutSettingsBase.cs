@@ -23,5 +23,10 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
             Description = "Secret key",
             SortOrder = 400)]
         public string SecretKey { get; set; }
+
+        [PaymentProviderSetting(Name = "Test Mode",
+            Description = "Set whether to process payments in test mode.",
+            SortOrder = 10000)]
+        public bool TestMode { get; set; }
     }
 }

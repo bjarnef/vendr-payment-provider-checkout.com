@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Checkout;
+using System;
 using System.Web;
 using Vendr.Core;
 using Vendr.Core.Models;
@@ -37,5 +38,14 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
 
             return settings.ErrorUrl;
         }
+
+        protected ApiClient GetClient(CheckoutSettingsBase settings)
+        {
+            var config = new CheckoutConfiguration(settings.SecretKey, settings.TestMode);
+            var client = new ApiClient(config);
+
+            return client;
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Vendr.Core;
 using Vendr.Core.Models;
+using Vendr.Core.Web;
 using Vendr.Core.Web.Api;
 using Vendr.Core.Web.PaymentProviders;
 
@@ -37,6 +38,38 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
             if (!Iso4217.CurrencyCodes.ContainsKey(currencyCode))
             {
                 throw new Exception("Currency must be a valid ISO 4217 currency code: " + currency.Name);
+            }
+
+            var orderAmount = AmountToMinorUnits(order.TransactionAmount.Value);
+
+            //var paymentMethods = settings.PaymentMethods?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            //       .Where(x => !string.IsNullOrWhiteSpace(x))
+            //       .Select(s => s.Trim())
+            //       .ToList();
+
+            var billingCountry = order.PaymentInfo.CountryId.HasValue
+                    ? Vendr.Services.CountryService.GetCountry(order.PaymentInfo.CountryId.Value)
+                    : null;
+
+            var metadata = new Dictionary<string, string>
+            {
+                { "orderReference", order.GenerateOrderReference() },
+                { "orderId", order.Id.ToString("D") },
+                { "orderNumber", order.OrderNumber }
+            };
+
+            try
+            {
+                // https://api-reference.checkout.com/#operation/createAHostedPaymentsSession
+
+                //var api = CheckoutApi.Create(settings.SecretKey, settings.TestMode);
+                var client = GetClient(settings);
+
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutPaymentProvider>(ex, $"Request for payment failed::\n{ex.Message}\n");
+                throw ex;
             }
 
             return new PaymentFormResult()
