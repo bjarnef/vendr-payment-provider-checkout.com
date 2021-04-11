@@ -1,3 +1,3 @@
-# Vendr Template Payment Provider
+# Vendr Checkout.com Payment Provider
 
-Template Payment Provider for Vendr, the eCommerce package for Umbrao v8+
+Checkout.com Payment Provider for Vendr, the eCommerce package for Umbrao v8+
