@@ -6,7 +6,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models
     public class PaymentPageSessionRequest
     {
         [JsonProperty("amount")]
-        public int Amount { get; set; }
+        public long Amount { get; set; }
 
         [JsonProperty("currency")]
         public string Currency { get; set; }
@@ -22,6 +22,9 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models
 
         [JsonProperty("billing")]
         public Address Billing { get; set; }
+
+        [JsonProperty("products")]
+        public List<Product> Products { get; set; }
 
         [JsonProperty("success_url")]
         public string SuccessUrl { get; set; }

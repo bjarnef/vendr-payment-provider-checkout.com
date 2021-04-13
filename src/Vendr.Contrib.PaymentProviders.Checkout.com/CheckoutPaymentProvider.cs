@@ -74,7 +74,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 
                 var request = new Api.Models.PaymentPageSessionRequest
                 {
-                    Amount = (int)orderAmount,
+                    Amount = orderAmount,
                     Currency = currencyCode,
                     Reference = order.OrderNumber,
                     Billing = new Api.Models.Address

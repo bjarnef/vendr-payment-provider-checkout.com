@@ -99,6 +99,7 @@
     <Compile Include="Api\Models\Address.cs" />
     <Compile Include="Api\Models\Customer.cs" />
     <Compile Include="Api\Models\PaymentPageSessionResponse.cs" />
+    <Compile Include="Api\Models\Product.cs" />
     <Compile Include="CheckoutPaymentProviderBase.cs" />
     <Compile Include="CheckoutSettingsBase.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
