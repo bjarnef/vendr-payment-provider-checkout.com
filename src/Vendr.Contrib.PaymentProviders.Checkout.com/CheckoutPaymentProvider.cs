@@ -1,4 +1,5 @@
 using Checkout;
+using Checkout.Payments;
 using System;
 using System.Collections.Generic;
 using System.Web;
@@ -8,10 +9,11 @@ using Vendr.Core.Models;
 using Vendr.Core.Web;
 using Vendr.Core.Web.Api;
 using Vendr.Core.Web.PaymentProviders;
+using CheckoutSdk = Checkout;
 
-namespace Vendr.Contrib.PaymentProviders.Checkout.com
+namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
-    [PaymentProvider("checkout", "Checkout.com", "Checkout.com payment provider", Icon = "icon-invoice")]
+    [PaymentProvider("checkout-dot-com", "Checkout.com", "Checkout.com payment provider", Icon = "icon-invoice")]
     public class CheckoutPaymentProvider : CheckoutPaymentProviderBase<CheckoutSettings>
     {
         public CheckoutPaymentProvider(VendrContext vendr)
@@ -51,30 +53,68 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
                     ? Vendr.Services.CountryService.GetCountry(order.PaymentInfo.CountryId.Value)
                     : null;
 
-            var metadata = new Dictionary<string, string>
+            var metadata = new Dictionary<string, object>
             {
-                { "orderReference", order.GenerateOrderReference() },
+                { "orderReference", order.GenerateOrderReference().ToString() },
                 { "orderId", order.Id.ToString("D") },
                 { "orderNumber", order.OrderNumber }
             };
+
+            string paymentFormLink = string.Empty;
 
             try
             {
                 // https://api-reference.checkout.com/#operation/createAHostedPaymentsSession
 
                 //var api = CheckoutApi.Create(settings.SecretKey, settings.TestMode);
-                var client = GetClient(settings);
+                //var client = GetClient(settings);
 
+                var config = GetClientConfig(settings);
+                var client = new Api.ApiClient(config);
+
+                var request = new Api.Models.PaymentPageSessionRequest
+                {
+                    Amount = (int)orderAmount,
+                    Currency = currencyCode,
+                    Reference = order.OrderNumber,
+                    Billing = new Api.Models.Address
+                    {
+                        Line1 = "",
+                        Line2 = "",
+                        Zip = "",
+                        City = "",
+                        State = "",
+                        Country = billingCountry?.Code
+                    },
+                   
+                    Customer = new Api.Models.Customer
+                    {
+                        Email = order.CustomerInfo.Email,
+                        Name = order.CustomerInfo.FirstName + " " + order.CustomerInfo.LastName
+                    },
+                    SuccessUrl = continueUrl,
+                    FailureUrl = settings.ErrorUrl,
+                    CancelUrl = cancelUrl,
+                    Metadata = metadata
+                };
+
+                // Create payment session
+                var paymentSession = client.CreateChargeSession(request);
+                if (paymentSession != null)
+                {
+                    // Get session url
+                    paymentFormLink = paymentSession.Links.Redirect.Href;
+                }
             }
             catch (Exception ex)
             {
-                Vendr.Log.Error<CheckoutPaymentProvider>(ex, $"Request for payment failed::\n{ex.Message}\n");
+                Vendr.Log.Error<CheckoutPaymentProvider>(ex, "Checkout.com - error creating payment.");
                 throw ex;
             }
 
             return new PaymentFormResult()
             {
-                Form = new PaymentForm(continueUrl, FormMethod.Post)
+                Form = new PaymentForm(paymentFormLink, FormMethod.Get)
             };
         }
 

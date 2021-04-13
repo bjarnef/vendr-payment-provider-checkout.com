@@ -1,12 +1,13 @@
 ﻿using Checkout;
 using System;
 using System.Web;
+using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models;
 using Vendr.Core;
 using Vendr.Core.Models;
 using Vendr.Core.Web.Api;
 using Vendr.Core.Web.PaymentProviders;
 
-namespace Vendr.Contrib.PaymentProviders.Checkout.com
+namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
     public abstract class CheckoutPaymentProviderBase<TSettings> : PaymentProviderBase<TSettings>
         where TSettings : CheckoutSettingsBase, new()
@@ -39,13 +40,25 @@ namespace Vendr.Contrib.PaymentProviders.Checkout.com
             return settings.ErrorUrl;
         }
 
-        protected ApiClient GetClient(CheckoutSettingsBase settings)
+        //protected ApiClient GetClient(CheckoutSettingsBase settings)
+        //{
+        //    var config = new CheckoutConfiguration(settings.SecretKey, settings.TestMode);
+        //    var client = new ApiClient(config);
+
+        //    return client;
+        //}
+
+        protected ClientConfig GetClientConfig(CheckoutSettingsBase settings)
         {
-            var config = new CheckoutConfiguration(settings.SecretKey, settings.TestMode);
-            var client = new ApiClient(config);
+            var testMode = settings.TestMode;
+            var basicAuth = Base64Encode(settings.SecretKey + ":");
 
-            return client;
+            return new ClientConfig
+            {
+                BaseUrl = testMode ? "https://api.sandbox.checkout.com" : "https://api.checkout.com",
+                Authorization = "Basic " + basicAuth,
+                Secret = settings.SecretKey
+            };
         }
-
     }
 }

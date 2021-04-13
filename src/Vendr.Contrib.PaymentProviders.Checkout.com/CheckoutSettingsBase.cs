@@ -1,6 +1,6 @@
 ﻿using Vendr.Core.Web.PaymentProviders;
 
-namespace Vendr.Contrib.PaymentProviders.Checkout.com
+namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
     public class CheckoutSettingsBase
     {

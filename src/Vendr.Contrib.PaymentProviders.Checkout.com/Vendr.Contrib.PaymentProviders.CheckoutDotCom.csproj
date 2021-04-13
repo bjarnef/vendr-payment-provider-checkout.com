@@ -7,8 +7,8 @@
     <ProjectGuid>{54D75F3D-BD42-45E8-BC99-210A9AD71CEB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Vendr.Contrib.PaymentProviders.Checkout.com</RootNamespace>
-    <AssemblyName>Vendr.Contrib.PaymentProviders.Checkout.com</AssemblyName>
+    <RootNamespace>Vendr.Contrib.PaymentProviders.CheckoutDotCom</RootNamespace>
+    <AssemblyName>Vendr.Contrib.PaymentProviders.CheckoutDotCom</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -37,11 +37,17 @@
     <Reference Include="CheckoutSdk, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CheckoutSDK.2.5.0\lib\net45\CheckoutSdk.dll</HintPath>
     </Reference>
+    <Reference Include="Flurl, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Flurl.2.8.2\lib\net40\Flurl.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl.Http, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Flurl.Http.2.4.2\lib\net46\Flurl.Http.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OD.Licensing, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OD.Licensing.0.3.2\lib\net45\OD.Licensing.dll</HintPath>
@@ -87,6 +93,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiClient.cs" />
+    <Compile Include="Api\Models\PaymentPageSessionRequest.cs" />
+    <Compile Include="Api\Models\ClientConfig.cs" />
+    <Compile Include="Api\Models\Address.cs" />
+    <Compile Include="Api\Models\Customer.cs" />
+    <Compile Include="Api\Models\PaymentPageSessionResponse.cs" />
     <Compile Include="CheckoutPaymentProviderBase.cs" />
     <Compile Include="CheckoutSettingsBase.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
@@ -98,5 +110,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
