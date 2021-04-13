@@ -1,12 +1,13 @@
 ﻿using Flurl.Http;
+using Flurl.Http.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Payments;
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api
 {
-    using Flurl.Http.Configuration;
     using Models;
-    using Newtonsoft.Json;
 
     public class ApiClient
     {
@@ -17,12 +18,33 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api
             _config = config;
         }
 
-        public PaymentPageSessionResponse CreateChargeSession(PaymentPageSessionRequest data)
+        public PaymentPageSessionResponse CreatePaymentSession(PaymentPageSessionRequest data)
         {
             return Request("/hosted-payments", (req) => req
                 .WithHeader("Content-Type", "application/json")
                 .PostJsonAsync(data)
                 .ReceiveJson<PaymentPageSessionResponse>());
+        }
+
+        public CaptureResponse CapturePayment(string id, CaptureRequest data)
+        {
+            return Request($"/payments/{id}/captures", (req) => req
+                .PostJsonAsync(data)
+                .ReceiveJson<CaptureResponse>());
+        }
+
+        public RefundResponse RefundPayment(string id, RefundRequest data)
+        {
+            return Request($"/payments/{id}/refunds", (req) => req
+                .PostJsonAsync(data)
+                .ReceiveJson<RefundResponse>());
+        }
+
+        public VoidResponse VoidPayment(string id, VoidRequest data)
+        {
+            return Request($"/payments/{id}/voids", (req) => req
+                .PostJsonAsync(data)
+                .ReceiveJson<VoidResponse>());
         }
 
         private TResult Request<TResult>(string url, Func<IFlurlRequest, Task<TResult>> func)
@@ -54,5 +76,4 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api
             return result;
         }
     }
-}
 }

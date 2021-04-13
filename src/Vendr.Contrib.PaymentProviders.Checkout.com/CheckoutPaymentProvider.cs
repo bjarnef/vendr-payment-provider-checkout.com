@@ -10,6 +10,7 @@ using Vendr.Core.Web;
 using Vendr.Core.Web.Api;
 using Vendr.Core.Web.PaymentProviders;
 using CheckoutSdk = Checkout;
+using PaymentStatus = Vendr.Core.Models.PaymentStatus;
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
@@ -69,6 +70,14 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 //var api = CheckoutApi.Create(settings.SecretKey, settings.TestMode);
                 //var client = GetClient(settings);
 
+                //var sessionId = "sid_xxx";
+                //GetPaymentResponse payment = await api.Payments.GetAsync(sessionId);
+
+                //if (payment.Approved)
+                //{
+                //    var cardSourceId = payment.Source.AsCard().Id;
+                //}
+
                 var config = GetClientConfig(settings);
                 var client = new Api.ApiClient(config);
 
@@ -99,7 +108,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 };
 
                 // Create payment session
-                var paymentSession = client.CreateChargeSession(request);
+                var paymentSession = client.CreatePaymentSession(request);
                 if (paymentSession != null)
                 {
                     // Get session url
