@@ -15,7 +15,7 @@ using PaymentStatus = Vendr.Core.Models.PaymentStatus;
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
-    [PaymentProvider("checkout-dot-com", "Checkout.com", "Checkout.com payment provider", Icon = "icon-invoice")]
+    [PaymentProvider("checkout-dot-com", "Checkout.com", "Checkout.com payment provider")]
     public class CheckoutPaymentProvider : CheckoutPaymentProviderBase<CheckoutSettings>
     {
         public CheckoutPaymentProvider(VendrContext vendr)
