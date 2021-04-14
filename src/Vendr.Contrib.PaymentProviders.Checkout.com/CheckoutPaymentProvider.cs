@@ -2,6 +2,7 @@ using Checkout;
 using Checkout.Payments;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Vendr.Core;
@@ -81,26 +82,38 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 var config = GetClientConfig(settings);
                 var client = new Api.ApiClient(config);
 
+                var products = order.OrderLines.Select(x => new Api.Models.Product
+                {
+                    Name = x.Name,
+                    Quantity = (int)x.Quantity,
+                    Price = (int)AmountToMinorUnits(x.TotalPrice.Value.WithoutTax)
+                })
+                .ToList();
+
                 var request = new Api.Models.PaymentPageSessionRequest
                 {
                     Amount = orderAmount,
                     Currency = currencyCode,
                     Reference = order.OrderNumber,
-                    Billing = new Api.Models.Address
+                    Billing = new Api.Models.Billing
                     {
-                        Line1 = "",
-                        Line2 = "",
-                        Zip = "",
-                        City = "",
-                        State = "",
-                        Country = billingCountry?.Code
+                        Address = new Api.Models.Address
+                        {
+                            Line1 = "",
+                            Line2 = "",
+                            Zip = "",
+                            City = "",
+                            State = "",
+                            Country = billingCountry?.Code
+                        },
+                        Phone = ""
                     },
-                   
                     Customer = new Api.Models.Customer
                     {
                         Email = order.CustomerInfo.Email,
                         Name = order.CustomerInfo.FirstName + " " + order.CustomerInfo.LastName
                     },
+                    Products = products,
                     SuccessUrl = continueUrl,
                     FailureUrl = settings.ErrorUrl,
                     CancelUrl = cancelUrl,

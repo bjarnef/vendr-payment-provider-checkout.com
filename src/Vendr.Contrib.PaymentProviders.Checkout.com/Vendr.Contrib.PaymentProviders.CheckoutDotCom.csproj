@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiClient.cs" />
+    <Compile Include="Api\Models\Billing.cs" />
     <Compile Include="Api\Models\Link.cs" />
     <Compile Include="Api\Models\PaymentPageSessionRequest.cs" />
     <Compile Include="Api\Models\ClientConfig.cs" />

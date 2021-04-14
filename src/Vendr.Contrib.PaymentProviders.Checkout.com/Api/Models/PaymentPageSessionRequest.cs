@@ -21,7 +21,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models
         public Customer Customer { get; set; }
 
         [JsonProperty("billing")]
-        public Address Billing { get; set; }
+        public Billing Billing { get; set; }
 
         [JsonProperty("products")]
         public List<Product> Products { get; set; }
