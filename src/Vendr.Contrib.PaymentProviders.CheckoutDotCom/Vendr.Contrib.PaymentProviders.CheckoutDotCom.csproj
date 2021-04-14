@@ -101,6 +101,7 @@
     <Compile Include="Api\Models\Address.cs" />
     <Compile Include="Api\Models\Customer.cs" />
     <Compile Include="Api\Models\PaymentPageSessionResponse.cs" />
+    <Compile Include="Api\Models\Phone.cs" />
     <Compile Include="Api\Models\Product.cs" />
     <Compile Include="Api\Models\Resource.cs" />
     <Compile Include="Api\Models\RiskRequest.cs" />

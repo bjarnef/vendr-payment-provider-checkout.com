@@ -107,7 +107,11 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                             State = "",
                             Country = billingCountry?.Code
                         },
-                        Phone = ""
+                        Phone = new Api.Models.Phone
+                        {
+                            CountryCode = "",
+                            Number = ""
+                        }
                     },
                     Customer = new Api.Models.Customer
                     {
