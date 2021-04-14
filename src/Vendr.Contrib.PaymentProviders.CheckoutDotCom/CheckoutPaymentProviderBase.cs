@@ -51,13 +51,13 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
         protected ClientConfig GetClientConfig(CheckoutSettingsBase settings)
         {
             var testMode = settings.TestMode;
-            var basicAuth = Base64Encode(settings.SecretKey + ":");
+            var secretKey = settings.SecretKey;
 
             return new ClientConfig
             {
                 BaseUrl = testMode ? "https://api.sandbox.checkout.com" : "https://api.checkout.com",
-                Authorization = "Basic " + basicAuth,
-                Secret = settings.SecretKey
+                Authorization = secretKey,
+                Secret = secretKey
             };
         }
     }
