@@ -3,7 +3,7 @@
     
     <info>
         <package>
-            <name>Vendr.Contrib.PaymentProviders.Checkout.com</name>
+            <name>Vendr.Contrib.PaymentProviders.CheckoutDotCom</name>
             <version>0.0.0</version>
             <license url="https://opensource.org/licenses/MIT">MIT</license>
             <url></url>

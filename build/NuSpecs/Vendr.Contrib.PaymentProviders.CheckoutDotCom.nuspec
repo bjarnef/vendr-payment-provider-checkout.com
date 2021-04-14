@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata minClientVersion="4.1.0">
-        <id>Vendr.Contrib.PaymentProviders.Checkout.com</id>
+        <id>Vendr.Contrib.PaymentProviders.CheckoutDotCom</id>
         <version>0.0.0</version>
-        <title>Vendr.Contrib.PaymentProviders.Checkout.com</title>
-        <authors>Outfield Digital Ltd</authors>
-        <owners>Outfield Digital Ltd</owners>
-        <copyright>Outfield Digital Ltd</copyright>
+        <title>Vendr.Contrib.PaymentProviders.CheckoutDotCom</title>
+        <authors>Vendr Contrib</authors>
+        <owners>Vendr Contrib</owners>
+        <copyright>Vendr Contrib</copyright>
         <icon>images\icon.png</icon>
         <license type="expression">MIT</license>
         <projectUrl>https://getvendr.net/</projectUrl>
@@ -16,6 +16,8 @@
         <tags>umbraco ecommerce vendr checkout.com</tags>
         <dependencies>
             <group targetFramework="net472">
+				<dependency id="Flurl" version="[2.8.2,2.999999)" />
+				<dependency id="Flurl.Http" version="[2.4.2,2.999999)" />
                 <dependency id="Vendr.Core.Web" version="[1.4.0,1.999999)" />
                 <!--<dependency id="UmbracoCms.Core" version="[$MinUmbracoVersion$]" />-->
             </group>
@@ -26,9 +28,9 @@
         <file src="$SrcDir$\assets\logo-128.png" target="images\icon.png" />
         
         <!-- libs -->
-        <file src="$SrcDir$\bin\Vendr.Contrib.PaymentProviders.Checkout.com.dll" target="lib\net472\Vendr.Contrib.PaymentProviders.Checkout.com.dll" />
+        <file src="$SrcDir$\bin\Vendr.Contrib.PaymentProviders.CheckoutDotCom.dll" target="lib\net472\Vendr.Contrib.PaymentProviders.CheckoutDotCom.dll" />
 
         <!-- symbols -->
-        <file src="$SrcDir$\bin\Vendr.Contrib.PaymentProviders.Checkout.com.pdb" target="lib\net472\Vendr.Contrib.PaymentProviders.Checkout.com.pdb" />
+        <file src="$SrcDir$\bin\Vendr.Contrib.PaymentProviders.CheckoutDotCom.pdb" target="lib\net472\Vendr.Contrib.PaymentProviders.CheckoutDotComm.pdb" />
     </files>
 </package>
