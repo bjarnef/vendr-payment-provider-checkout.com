@@ -2,6 +2,9 @@
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models
 {
+    /// <summary>
+    /// Defines a response for a payment page session.
+    /// </summary>
     public class PaymentPageSessionResponse
     {
         [JsonProperty("reference")]

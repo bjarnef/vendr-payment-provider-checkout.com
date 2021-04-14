@@ -103,6 +103,8 @@
     <Compile Include="Api\Models\PaymentPageSessionResponse.cs" />
     <Compile Include="Api\Models\Product.cs" />
     <Compile Include="Api\Models\Resource.cs" />
+    <Compile Include="Api\Models\RiskRequest.cs" />
+    <Compile Include="Api\Models\ThreeDSRequest.cs" />
     <Compile Include="Api\Payments\CaptureRequest.cs" />
     <Compile Include="Api\Payments\CaptureResponse.cs" />
     <Compile Include="Api\Payments\RefundRequest.cs" />
