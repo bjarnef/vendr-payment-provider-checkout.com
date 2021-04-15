@@ -2,7 +2,7 @@
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
-    public class CheckoutSettingsBase
+    public class CheckoutDotComSettingsBase
     {
         [PaymentProviderSetting(Name = "Continue URL",
             Description = "The URL to continue to after this provider has done processing. eg: /continue/",

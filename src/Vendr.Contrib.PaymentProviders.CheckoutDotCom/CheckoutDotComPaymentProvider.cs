@@ -12,9 +12,9 @@ using Vendr.Core.Web.PaymentProviders;
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
     [PaymentProvider("checkout-dot-com", "Checkout.com", "Checkout.com payment provider for one time payments")]
-    public class CheckoutPaymentProvider : CheckoutPaymentProviderBase<CheckoutSettings>
+    public class CheckoutDotComPaymentProvider : CheckoutPaymentProviderBase<CheckoutDotComSettings>
     {
-        public CheckoutPaymentProvider(VendrContext vendr)
+        public CheckoutDotComPaymentProvider(VendrContext vendr)
             : base(vendr)
         { }
 
@@ -30,7 +30,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             new TransactionMetaDataDefinition("checkoutSessionId", "Checkout.com Session ID")
         };
 
-        public override PaymentFormResult GenerateForm(OrderReadOnly order, string continueUrl, string cancelUrl, string callbackUrl, CheckoutSettings settings)
+        public override PaymentFormResult GenerateForm(OrderReadOnly order, string continueUrl, string cancelUrl, string callbackUrl, CheckoutDotComSettings settings)
         {
             var currency = Vendr.Services.CurrencyService.GetCurrency(order.CurrencyId);
             var currencyCode = currency.Code.ToUpperInvariant();
@@ -128,12 +128,12 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 if (paymentSession != null)
                 {
                     // Get session url
-                    paymentFormLink = paymentSession.GetRedirectLink().Href;
+                    paymentFormLink = paymentSession.GetLink("redirect").Href;
                 }
             }
             catch (Exception ex)
             {
-                Vendr.Log.Error<CheckoutPaymentProvider>(ex, "Checkout.com - error creating payment.");
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - error creating payment.");
                 throw ex;
             }
 
@@ -143,18 +143,153 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             };
         }
 
-        public override CallbackResult ProcessCallback(OrderReadOnly order, HttpRequestBase request, CheckoutSettings settings)
+        public override CallbackResult ProcessCallback(OrderReadOnly order, HttpRequestBase request, CheckoutDotComSettings settings)
         {
-            return new CallbackResult
+            try
             {
-                TransactionInfo = new TransactionInfo
+                // Process callback
+
+                //var webhookEvent = GetWebhookEvent(request, settings);
+
+                //if (webhookEvent != null)
+                //{
+                //    return CallbackResult.Ok(new TransactionInfo
+                //    {
+                //        TransactionId = webhookEvent.Transaction,
+                //        AmountAuthorized = order.TotalPrice.Value.WithTax,
+                //        PaymentStatus = webhookEvent.EventType == WebhookEventType.InvoiceSettled ? PaymentStatus.Captured : PaymentStatus.Authorized
+                //    });
+                //}
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - ProcessCallback");
+            }
+
+            return CallbackResult.BadRequest();
+        }
+
+        public override ApiResult FetchPaymentStatus(OrderReadOnly order, CheckoutDotComSettings settings)
+        {
+            try
+            {
+                var config = GetClientConfig(settings);
+                var client = new Api.ApiClient(config);
+
+                // Get payment details
+                var payment = client.GetPaymentDetails(order.TransactionInfo.TransactionId);
+
+                return new ApiResult()
                 {
-                    AmountAuthorized = order.TransactionAmount.Value,
-                    TransactionFee = 0m,
-                    TransactionId = Guid.NewGuid().ToString("N"),
-                    PaymentStatus = PaymentStatus.Authorized
-                }
-            };
+                    TransactionInfo = new TransactionInfoUpdate()
+                    {
+                        TransactionId = payment.Id,
+                        PaymentStatus = GetPaymentStatus(payment)
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - FetchPaymentStatus");
+            }
+
+            return ApiResult.Empty;
+        }
+
+        public override ApiResult CancelPayment(OrderReadOnly order, CheckoutDotComSettings settings)
+        {
+            try
+            {
+                var config = GetClientConfig(settings);
+                var client = new Api.ApiClient(config);
+
+                var data = new Api.Payments.VoidRequest
+                {
+                    
+                };
+
+                // Cancel payment
+                var payment = client.VoidPayment(order.TransactionInfo.TransactionId, data);
+                
+                return new ApiResult()
+                {
+                    TransactionInfo = new TransactionInfoUpdate()
+                    {
+                        TransactionId = order.TransactionInfo.TransactionId, //GetTransactionId(payment),
+                        PaymentStatus = PaymentStatus.Cancelled //GetPaymentStatus(payment)
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - CancelPayment");
+            }
+
+            return ApiResult.Empty;
+        }
+
+        public override ApiResult CapturePayment(OrderReadOnly order, CheckoutDotComSettings settings)
+        {
+            try
+            {
+                var config = GetClientConfig(settings);
+                var client = new Api.ApiClient(config);
+
+                var data = new Api.Payments.CaptureRequest
+                {
+                    Amount = AmountToMinorUnits(order.TransactionInfo.AmountAuthorized.Value)
+                };
+
+                // Capture payment
+                var payment = client.CapturePayment(order.TransactionInfo.TransactionId, data);
+
+                return new ApiResult()
+                {
+                    TransactionInfo = new TransactionInfoUpdate()
+                    {
+                        TransactionId = order.TransactionInfo.TransactionId, //GetTransactionId(payment),
+                        PaymentStatus = PaymentStatus.Captured //GetPaymentStatus(payment)
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - CapturePayment");
+            }
+
+            return ApiResult.Empty;
+        }
+
+        public override ApiResult RefundPayment(OrderReadOnly order, CheckoutDotComSettings settings)
+        {
+            try
+            {
+                var config = GetClientConfig(settings);
+                var client = new Api.ApiClient(config);
+
+                var data = new Api.Payments.RefundRequest
+                {
+                    Amount = AmountToMinorUnits(order.TransactionInfo.AmountAuthorized.Value)
+                };
+
+                // Refund payment
+                var refund = client.RefundPayment(order.TransactionInfo.TransactionId, data);
+
+                return new ApiResult()
+                {
+                    TransactionInfo = new TransactionInfoUpdate()
+                    {
+                        TransactionId = order.TransactionInfo.TransactionId, //GetTransactionId(refund),
+                        PaymentStatus = PaymentStatus.Refunded //GetPaymentStatus(refund)
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - RefundPayment");
+            }
+
+            return ApiResult.Empty;
         }
     }
 }

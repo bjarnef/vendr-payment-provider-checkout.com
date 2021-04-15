@@ -103,17 +103,23 @@
     <Compile Include="Api\Models\Resource.cs" />
     <Compile Include="Api\Models\RiskRequest.cs" />
     <Compile Include="Api\Models\ThreeDSRequest.cs" />
+    <Compile Include="Api\Payments\ActionType.cs" />
     <Compile Include="Api\Payments\CaptureRequest.cs" />
     <Compile Include="Api\Payments\CaptureResponse.cs" />
+    <Compile Include="Api\Payments\GetPaymentResponse.cs" />
+    <Compile Include="Api\Payments\PaymentAction.cs" />
+    <Compile Include="Api\Payments\PaymentRecipient.cs" />
+    <Compile Include="Api\Payments\PaymentStatus.cs" />
     <Compile Include="Api\Payments\RefundRequest.cs" />
     <Compile Include="Api\Payments\RefundResponse.cs" />
+    <Compile Include="Api\Payments\ThreeDSEnrollment.cs" />
     <Compile Include="Api\Payments\VoidRequest.cs" />
     <Compile Include="Api\Payments\VoidResponse.cs" />
-    <Compile Include="CheckoutPaymentProviderBase.cs" />
-    <Compile Include="CheckoutSettingsBase.cs" />
+    <Compile Include="CheckoutDotComPaymentProviderBase.cs" />
+    <Compile Include="CheckoutDotComSettingsBase.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="CheckoutPaymentProvider.cs" />
-    <Compile Include="CheckoutSettings.cs" />
+    <Compile Include="CheckoutDotComPaymentProvider.cs" />
+    <Compile Include="CheckoutDotComSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

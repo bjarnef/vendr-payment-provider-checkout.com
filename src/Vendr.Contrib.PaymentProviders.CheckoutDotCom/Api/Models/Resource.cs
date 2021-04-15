@@ -32,15 +32,6 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models
         }
 
         /// <summary>
-        /// Gets the resource's redirect link.
-        /// </summary>
-        /// <returns>The redirect if it exists, otherwise null.</returns>
-        public Link GetRedirectLink()
-        {
-            return GetLink("redirect");
-        }
-
-        /// <summary>
         /// Checks if a link with the specified <paramref="relation"/> type exists.
         /// </summary>
         /// <param name="relation">The link relation type.</param>

@@ -1,13 +1,15 @@
 ﻿using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models;
+using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Payments;
 using Vendr.Core;
 using Vendr.Core.Models;
 using Vendr.Core.Web.Api;
 using Vendr.Core.Web.PaymentProviders;
+using PaymentStatus = Vendr.Core.Models.PaymentStatus;
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
     public abstract class CheckoutPaymentProviderBase<TSettings> : PaymentProviderBase<TSettings>
-        where TSettings : CheckoutSettingsBase, new()
+        where TSettings : CheckoutDotComSettingsBase, new()
     {
         public CheckoutPaymentProviderBase(VendrContext vendr)
             : base(vendr)
@@ -37,7 +39,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             return settings.ErrorUrl;
         }
 
-        protected ClientConfig GetClientConfig(CheckoutSettingsBase settings)
+        protected ClientConfig GetClientConfig(CheckoutDotComSettingsBase settings)
         {
             var testMode = settings.TestMode;
             var secretKey = settings.SecretKey;
@@ -48,6 +50,28 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 Authorization = secretKey,
                 Secret = secretKey
             };
+        }
+
+        protected PaymentStatus GetPaymentStatus(GetPaymentResponse payment)
+        {
+            if (payment.Status == Api.Payments.PaymentStatus.Authorized)
+                return PaymentStatus.Authorized;
+
+            if (payment.Status == Api.Payments.PaymentStatus.Captured)
+                return PaymentStatus.Captured;
+
+            if (payment.Status == Api.Payments.PaymentStatus.Refunded)
+                return PaymentStatus.Refunded;
+
+            if (payment.Status == Api.Payments.PaymentStatus.Canceled ||
+                payment.Status == Api.Payments.PaymentStatus.Voided)
+                return PaymentStatus.Cancelled;
+
+            if (payment.Status == Api.Payments.PaymentStatus.Expired ||
+                payment.Status == Api.Payments.PaymentStatus.Declined)
+                return PaymentStatus.Error;
+
+            return PaymentStatus.Initialized;
         }
     }
 }

@@ -8,6 +8,7 @@ using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Payments;
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api
 {
     using Models;
+    using System.Collections.Generic;
 
     public class ApiClient
     {
@@ -24,6 +25,20 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api
                 .WithHeader("Content-Type", "application/json")
                 .PostJsonAsync(data)
                 .ReceiveJson<PaymentPageSessionResponse>());
+        }
+
+        public GetPaymentResponse GetPaymentDetails(string id)
+        {
+            return Request($"/payments/{id}", (req) => req
+                .WithHeader("Content-Type", "application/json")
+                .GetJsonAsync<GetPaymentResponse>());
+        }
+
+        public IEnumerable<PaymentAction> GetPaymentActions(string id)
+        {
+            return Request($"/payments/{id}/actions", (req) => req
+                .WithHeader("Content-Type", "application/json")
+                .GetJsonAsync<IEnumerable<PaymentAction>>());
         }
 
         public CaptureResponse CapturePayment(string id, CaptureRequest data)
