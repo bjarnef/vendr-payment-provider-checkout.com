@@ -48,8 +48,6 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             //       .Select(s => s.Trim())
             //       .ToList();
 
-            var errorUrl = GetErrorUrl(order, settings);
-
             var billingCountry = order.PaymentInfo.CountryId.HasValue
                     ? Vendr.Services.CountryService.GetCountry(order.PaymentInfo.CountryId.Value)
                     : null;
@@ -115,7 +113,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                     },
                     Products = products,
                     SuccessUrl = continueUrl,
-                    FailureUrl = errorUrl,
+                    FailureUrl = cancelUrl, // GetErrorUrl(order, settings);
                     CancelUrl = cancelUrl,
                     Metadata = metadata
                 };
