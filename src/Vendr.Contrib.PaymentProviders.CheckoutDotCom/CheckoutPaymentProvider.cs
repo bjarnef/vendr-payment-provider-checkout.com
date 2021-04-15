@@ -93,6 +93,13 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 })
                 .ToList();
 
+                var phone = new Api.Models.Phone
+                {
+                    CountryCode = "",
+                    Number = !string.IsNullOrWhiteSpace(settings.BillingPhonePropertyAlias)
+                        ? order.Properties[settings.BillingPhonePropertyAlias] : null
+                };
+
                 var request = new Api.Models.PaymentPageSessionRequest
                 {
                     Amount = orderAmount,
@@ -102,18 +109,19 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                     {
                         Address = new Api.Models.Address
                         {
-                            Line1 = "",
-                            Line2 = "",
-                            Zip = "",
-                            City = "",
-                            State = "",
+                            Line1 = !string.IsNullOrWhiteSpace(settings.BillingAddressLine1PropertyAlias)
+                                ? order.Properties[settings.BillingAddressLine1PropertyAlias] : null,
+                            Line2 = !string.IsNullOrWhiteSpace(settings.BillingAddressLine2PropertyAlias)
+                                ? order.Properties[settings.BillingAddressLine2PropertyAlias] : null,
+                            Zip = !string.IsNullOrWhiteSpace(settings.BillingAddressZipCodePropertyAlias)
+                                ? order.Properties[settings.BillingAddressZipCodePropertyAlias] : null,
+                            City = !string.IsNullOrWhiteSpace(settings.BillingAddressCityPropertyAlias)
+                                ? order.Properties[settings.BillingAddressCityPropertyAlias] : null,
+                            State = !string.IsNullOrWhiteSpace(settings.BillingAddressStatePropertyAlias)
+                                ? order.Properties[settings.BillingAddressStatePropertyAlias] : null,
                             Country = billingCountry?.Code
                         },
-                        Phone = new Api.Models.Phone
-                        {
-                            CountryCode = "",
-                            Number = ""
-                        }
+                        Phone = phone
                     },
                     Customer = new Api.Models.Customer
                     {

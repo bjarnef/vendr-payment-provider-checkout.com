@@ -19,6 +19,36 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             SortOrder = 300)]
         public string ErrorUrl { get; set; }
 
+        [PaymentProviderSetting(Name = "Billing Address (Line 1) Property Alias",
+            Description = "The order property alias containing line 1 of the billing address",
+            SortOrder = 400)]
+        public string BillingAddressLine1PropertyAlias { get; set; }
+
+        [PaymentProviderSetting(Name = "Billing Address (Line 2) Property Alias",
+            Description = "The order property alias containing line 2 of the billing address",
+            SortOrder = 500)]
+        public string BillingAddressLine2PropertyAlias { get; set; }
+
+        [PaymentProviderSetting(Name = "Billing Address City Property Alias",
+            Description = "The order property alias containing the city of the billing address",
+            SortOrder = 600)]
+        public string BillingAddressCityPropertyAlias { get; set; }
+
+        [PaymentProviderSetting(Name = "Billing Address ZipCode Property Alias",
+            Description = "The order property alias containing the zip code of the billing address",
+            SortOrder = 700)]
+        public string BillingAddressZipCodePropertyAlias { get; set; }
+
+        [PaymentProviderSetting(Name = "Billing Address State Property Alias",
+            Description = "The order property alias containing the state of the billing address",
+            SortOrder = 800)]
+        public string BillingAddressStatePropertyAlias { get; set; }
+
+        [PaymentProviderSetting(Name = "Billing Phone Property Alias",
+            Description = "The order property alias containing the phone of the billing address",
+            SortOrder = 900)]
+        public string BillingPhonePropertyAlias { get; set; }
+
         [PaymentProviderSetting(Name = "Secret Key",
             Description = "Secret key",
             SortOrder = 400)]
