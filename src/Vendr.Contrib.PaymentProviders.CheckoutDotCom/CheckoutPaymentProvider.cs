@@ -128,7 +128,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 if (paymentSession != null)
                 {
                     // Get session url
-                    paymentFormLink = paymentSession.GetSelfLink().Href;
+                    paymentFormLink = paymentSession.GetRedirectLink().Href;
                 }
             }
             catch (Exception ex)
