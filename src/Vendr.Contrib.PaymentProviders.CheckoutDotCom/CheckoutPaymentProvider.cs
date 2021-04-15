@@ -1,5 +1,3 @@
-using Checkout;
-using Checkout.Payments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +8,6 @@ using Vendr.Core.Models;
 using Vendr.Core.Web;
 using Vendr.Core.Web.Api;
 using Vendr.Core.Web.PaymentProviders;
-using CheckoutSdk = Checkout;
-using PaymentStatus = Vendr.Core.Models.PaymentStatus;
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
@@ -70,17 +66,6 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             try
             {
                 // https://api-reference.checkout.com/#operation/createAHostedPaymentsSession
-
-                //var api = CheckoutApi.Create(settings.SecretKey, settings.TestMode);
-                //var client = GetClient(settings);
-
-                //var sessionId = "sid_xxx";
-                //GetPaymentResponse payment = await api.Payments.GetAsync(sessionId);
-
-                //if (payment.Approved)
-                //{
-                //    var cardSourceId = payment.Source.AsCard().Id;
-                //}
 
                 var config = GetClientConfig(settings);
                 var client = new Api.ApiClient(config);
