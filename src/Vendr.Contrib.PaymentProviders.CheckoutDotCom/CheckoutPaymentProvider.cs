@@ -76,12 +76,17 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 })
                 .ToList();
 
-                var phone = new Api.Models.Phone
+                Api.Models.Phone phone = null;
+
+                if (!string.IsNullOrWhiteSpace(settings.BillingPhonePropertyAlias) &&
+                    !string.IsNullOrWhiteSpace(order.Properties[settings.BillingPhonePropertyAlias]))
                 {
-                    CountryCode = null,
-                    Number = !string.IsNullOrWhiteSpace(settings.BillingPhonePropertyAlias)
-                        ? order.Properties[settings.BillingPhonePropertyAlias] : null
-                };
+                    phone = new Api.Models.Phone
+                    {
+                        CountryCode = null,
+                        Number = order.Properties[settings.BillingPhonePropertyAlias]
+                    };
+                }
 
                 var request = new Api.Models.PaymentPageSessionRequest
                 {
