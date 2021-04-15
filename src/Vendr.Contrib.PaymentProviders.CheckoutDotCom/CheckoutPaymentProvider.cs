@@ -80,7 +80,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 
                 var phone = new Api.Models.Phone
                 {
-                    CountryCode = "",
+                    CountryCode = null,
                     Number = !string.IsNullOrWhiteSpace(settings.BillingPhonePropertyAlias)
                         ? order.Properties[settings.BillingPhonePropertyAlias] : null
                 };
