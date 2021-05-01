@@ -33,6 +33,12 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to capture the payment automatically (default).
+        /// </summary>
+        [JsonProperty("capture")]
+        public bool? Capture { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets a customer of the payment.
         /// </summary>
         [JsonProperty("customer")]

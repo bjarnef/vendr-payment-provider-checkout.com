@@ -12,7 +12,7 @@ using Vendr.Core.Web.PaymentProviders;
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
     [PaymentProvider("checkout-dot-com", "Checkout.com", "Checkout.com payment provider for one time payments")]
-    public class CheckoutDotComPaymentProvider : CheckoutPaymentProviderBase<CheckoutDotComSettings>
+    public class CheckoutDotComPaymentProvider : CheckoutDotComPaymentProviderBase<CheckoutDotComSettings>
     {
         public CheckoutDotComPaymentProvider(VendrContext vendr)
             : base(vendr)
@@ -149,17 +149,16 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             {
                 // Process callback
 
-                //var webhookEvent = GetWebhookEvent(request, settings);
-
-                //if (webhookEvent != null)
-                //{
-                //    return CallbackResult.Ok(new TransactionInfo
-                //    {
-                //        TransactionId = webhookEvent.Transaction,
-                //        AmountAuthorized = order.TotalPrice.Value.WithTax,
-                //        PaymentStatus = webhookEvent.EventType == WebhookEventType.InvoiceSettled ? PaymentStatus.Captured : PaymentStatus.Authorized
-                //    });
-                //}
+                var webhookEvent = GetWebhookEvent(request, settings);
+                if (webhookEvent != null)
+                {
+                    return CallbackResult.Ok(new TransactionInfo
+                    {
+                        TransactionId = order.TransactionInfo.TransactionId,
+                        AmountAuthorized = order.TransactionAmount.Value,
+                        PaymentStatus = PaymentStatus.Authorized
+                    });
+                }
             }
             catch (Exception ex)
             {

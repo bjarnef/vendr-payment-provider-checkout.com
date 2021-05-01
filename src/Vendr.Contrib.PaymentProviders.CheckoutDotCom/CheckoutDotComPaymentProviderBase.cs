@@ -1,5 +1,12 @@
-﻿using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Events;
+using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models;
 using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Payments;
+using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Webhooks;
 using Vendr.Core;
 using Vendr.Core.Models;
 using Vendr.Core.Web.Api;
@@ -8,10 +15,10 @@ using PaymentStatus = Vendr.Core.Models.PaymentStatus;
 
 namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 {
-    public abstract class CheckoutPaymentProviderBase<TSettings> : PaymentProviderBase<TSettings>
+    public abstract class CheckoutDotComPaymentProviderBase<TSettings> : PaymentProviderBase<TSettings>
         where TSettings : CheckoutDotComSettingsBase, new()
     {
-        public CheckoutPaymentProviderBase(VendrContext vendr)
+        public CheckoutDotComPaymentProviderBase(VendrContext vendr)
             : base(vendr)
         { }
 
@@ -39,6 +46,51 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             return settings.ErrorUrl;
         }
 
+        public override OrderReference GetOrderReference(HttpRequestBase request, TSettings settings)
+        {
+            try
+            {
+                var webhookEvent = GetWebhookEvent(request, settings);
+                if (webhookEvent != null && webhookEvent.Data?.Count > 0)
+                {
+                    if (webhookEvent.Data.TryGetValue("metadata", out object obj))
+                    {
+                        var metadata = obj?.ToDictionary();
+                        if (metadata != null)
+                        {
+                            if (metadata.TryGetValue("orderReference", out object orderReference))
+                            {
+                                return OrderReference.Parse(orderReference.ToString());
+                            }
+                        }
+                    };
+
+                    //if (!string.IsNullOrWhiteSpace(reepayEvent.Invoice) &&
+                    //    (reepayEvent.EventType == WebhookEventType.InvoiceAuthorized ||
+                    //     reepayEvent.EventType == WebhookEventType.InvoiceSettled))
+                    //{
+                    //    var clientConfig = GetReepayClientConfig(settings);
+                    //    var client = new ReepayClient(clientConfig);
+                    //    var metadata = client.GetInvoiceMetaData(reepayEvent.Invoice);
+                    //    if (metadata != null)
+                    //    {
+                    //        if (metadata.TryGetValue("orderReference", out object orderReference))
+                    //        {
+                    //            return OrderReference.Parse(orderReference.ToString());
+                    //        }
+                    //    }
+                    //}
+                }
+            }
+            catch (Exception ex)
+            {
+                Vendr.Log.Error<CheckoutDotComPaymentProvider>(ex, "Checkout.com - GetOrderReference");
+                //Vendr.Log.Error<CheckoutDotComPaymentProviderBase<TSettings>>(ex, "Checkout.com - GetOrderReference");
+            }
+
+            return base.GetOrderReference(request, settings);
+        }
+
         protected ClientConfig GetClientConfig(CheckoutDotComSettingsBase settings)
         {
             var testMode = settings.TestMode;
@@ -50,6 +102,39 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 Authorization = secretKey,
                 Secret = secretKey
             };
+        }
+
+        protected EventResponse GetWebhookEvent(HttpRequestBase request, CheckoutDotComSettingsBase settings)
+        {
+            EventResponse webhookEvent = null;
+
+            if (HttpContext.Current.Items["Vendr_CheckoutDotComEvent"] != null)
+            {
+                webhookEvent = (EventResponse)HttpContext.Current.Items["Vendr_CheckoutDotComEvent"];
+            }
+            else
+            {
+                try
+                {
+                    if (request.InputStream.CanSeek)
+                        request.InputStream.Seek(0, SeekOrigin.Begin);
+
+                    using (var sr = new StreamReader(request.InputStream))
+                    {
+                        var json = sr.ReadToEnd();
+
+                        webhookEvent = JsonConvert.DeserializeObject<EventResponse>(json);
+
+                        HttpContext.Current.Items["Vendr_CheckoutDotComEvent"] = webhookEvent;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Vendr.Log.Error<CheckoutDotComPaymentProviderBase<TSettings>>(ex, "Checkout.com - GetWebhookEvent");
+                }
+            }
+
+            return webhookEvent;
         }
 
         protected PaymentStatus GetPaymentStatus(GetPaymentResponse payment)

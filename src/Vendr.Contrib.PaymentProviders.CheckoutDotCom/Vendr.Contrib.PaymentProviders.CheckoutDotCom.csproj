@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiClient.cs" />
+    <Compile Include="Api\Events\EventResponse.cs" />
     <Compile Include="Api\Models\Billing.cs" />
     <Compile Include="Api\Models\Link.cs" />
     <Compile Include="Api\Models\PaymentPageSessionRequest.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Api\Payments\ThreeDSEnrollment.cs" />
     <Compile Include="Api\Payments\VoidRequest.cs" />
     <Compile Include="Api\Payments\VoidResponse.cs" />
+    <Compile Include="Api\Webhooks\WebhookResponse.cs" />
     <Compile Include="CheckoutDotComPaymentProviderBase.cs" />
     <Compile Include="CheckoutDotComSettingsBase.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
