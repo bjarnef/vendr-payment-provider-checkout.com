@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Web;
 using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Events;
 using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Models;
 using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Payments;
-using Vendr.Contrib.PaymentProviders.CheckoutDotCom.Api.Webhooks;
 using Vendr.Core;
 using Vendr.Core.Models;
 using Vendr.Core.Web.Api;
@@ -55,7 +55,9 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 {
                     if (webhookEvent.Data.TryGetValue("metadata", out object obj))
                     {
-                        var metadata = obj?.ToDictionary();
+                        var metadata = JObject.FromObject(obj)
+                            .ToObject<Dictionary<string, object>>();
+
                         if (metadata != null)
                         {
                             if (metadata.TryGetValue("orderReference", out object orderReference))
