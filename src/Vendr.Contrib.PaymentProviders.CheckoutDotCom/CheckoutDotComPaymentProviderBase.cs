@@ -125,6 +125,9 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                     {
                         var json = sr.ReadToEnd();
 
+                        // Just validate the webhook signature
+                        VerifySignature(request.Headers["CKO-Signature"], settings.SecretKey, json);
+
                         webhookEvent = JsonConvert.DeserializeObject<EventResponse>(json);
 
                         HttpContext.Current.Items["Vendr_CheckoutDotComEvent"] = webhookEvent;
@@ -137,6 +140,12 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
             }
 
             return webhookEvent;
+        }
+
+        private void VerifySignature(string signature, string secretKey, string payload)
+        {
+            if (HMACSHA256Hash(secretKey, payload) != signature)
+                throw new Exception("The signature of the webhook event could not be verified.");
         }
 
         protected PaymentStatus GetPaymentStatus(GetPaymentResponse payment)
