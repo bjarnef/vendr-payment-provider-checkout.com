@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,14 +151,22 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 // Process callback
 
                 var webhookEvent = GetWebhookEvent(request, settings);
-                if (webhookEvent != null)
+                if (webhookEvent != null && webhookEvent.Data != null)
                 {
-                    return CallbackResult.Ok(new TransactionInfo
+                    var data = JObject.FromObject(webhookEvent.Data);
+
+                    var transactionId = data.SelectToken("id")?.Value<string>();
+                    var amount = data.SelectToken("amount")?.Value<int>();
+
+                    if (transactionId != null && amount != null)
                     {
-                        TransactionId = order.TransactionInfo.TransactionId,
-                        AmountAuthorized = order.TransactionAmount.Value,
-                        PaymentStatus = PaymentStatus.Authorized
-                    });
+                        return CallbackResult.Ok(new TransactionInfo
+                        {
+                            TransactionId = transactionId.ToString(),
+                            AmountAuthorized = AmountFromMinorUnits(amount.Value),
+                            PaymentStatus = PaymentStatus.Authorized
+                        });
+                    }
                 }
             }
             catch (Exception ex)

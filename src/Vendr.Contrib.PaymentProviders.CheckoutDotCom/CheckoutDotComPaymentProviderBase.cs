@@ -65,23 +65,7 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                                 return OrderReference.Parse(orderReference.ToString());
                             }
                         }
-                    };
-
-                    //if (!string.IsNullOrWhiteSpace(reepayEvent.Invoice) &&
-                    //    (reepayEvent.EventType == WebhookEventType.InvoiceAuthorized ||
-                    //     reepayEvent.EventType == WebhookEventType.InvoiceSettled))
-                    //{
-                    //    var clientConfig = GetReepayClientConfig(settings);
-                    //    var client = new ReepayClient(clientConfig);
-                    //    var metadata = client.GetInvoiceMetaData(reepayEvent.Invoice);
-                    //    if (metadata != null)
-                    //    {
-                    //        if (metadata.TryGetValue("orderReference", out object orderReference))
-                    //        {
-                    //            return OrderReference.Parse(orderReference.ToString());
-                    //        }
-                    //    }
-                    //}
+                    }
                 }
             }
             catch (Exception ex)
@@ -144,6 +128,8 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
 
         private void VerifySignature(string signature, string secretKey, string payload)
         {
+            // Webhook signatures: https://docs.checkout.com/reporting-and-insights/webhooks#Webhooks-Webhooksignatures
+
             if (HMACSHA256Hash(secretKey, payload) != signature)
                 throw new Exception("The signature of the webhook event could not be verified.");
         }
