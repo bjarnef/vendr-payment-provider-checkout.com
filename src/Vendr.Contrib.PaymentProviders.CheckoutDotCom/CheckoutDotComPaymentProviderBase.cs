@@ -149,6 +149,9 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
                 payment.Status == Api.Payments.PaymentStatus.Voided)
                 return PaymentStatus.Cancelled;
 
+            if (payment.Status == Api.Payments.PaymentStatus.Pending)
+                return PaymentStatus.PendingExternalSystem;
+
             if (payment.Status == Api.Payments.PaymentStatus.Expired ||
                 payment.Status == Api.Payments.PaymentStatus.Declined)
                 return PaymentStatus.Error;

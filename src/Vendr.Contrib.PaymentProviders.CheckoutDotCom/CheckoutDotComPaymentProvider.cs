@@ -148,23 +148,30 @@ namespace Vendr.Contrib.PaymentProviders.CheckoutDotCom
         {
             try
             {
+                var config = GetClientConfig(settings);
+                var client = new Api.ApiClient(config);
+
                 // Process callback
 
                 var webhookEvent = GetWebhookEvent(request, settings);
                 if (webhookEvent != null && webhookEvent.Data != null)
                 {
+                    // Either fetch payment details https://docs.checkout.com/payments/manage-payments/get-payment-details
+                    // or retrive event https://api-reference.checkout.com/#operation/retrieveEvent
+
                     var data = JObject.FromObject(webhookEvent.Data);
-
                     var transactionId = data.SelectToken("id")?.Value<string>();
-                    var amount = data.SelectToken("amount")?.Value<int>();
+                    //var amount = data.SelectToken("amount")?.Value<int>();
 
-                    if (transactionId != null && amount != null)
+                    var payment = client.GetPaymentDetails(transactionId);
+
+                    if (payment != null && payment.Amount != null)
                     {
                         return CallbackResult.Ok(new TransactionInfo
                         {
-                            TransactionId = transactionId.ToString(),
-                            AmountAuthorized = AmountFromMinorUnits(amount.Value),
-                            PaymentStatus = PaymentStatus.Authorized
+                            TransactionId = transactionId,
+                            AmountAuthorized = AmountFromMinorUnits(payment.Amount.Value),
+                            PaymentStatus = GetPaymentStatus(payment)
                         });
                     }
                 }
